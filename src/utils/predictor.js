@@ -25,10 +25,20 @@ export function calculateAttritionRisk(employeeData) {
   const envSat = Number(employeeData.environment_satisfaction) || 3;
   const relSat = Number(employeeData.relationship_satisfaction) || 3;
   
-  const isOvertime = 
-    employeeData.overtime === true || 
-    employeeData.overtime === 1 || 
-    String(employeeData.overtime).toLowerCase() === 'yes';
+  // Support 1-5 overtime rating scale or boolean
+  const otRating = typeof employeeData.overtime_score === 'number'
+    ? employeeData.overtime_score
+    : (typeof employeeData.overtimeRating === 'number')
+      ? employeeData.overtimeRating
+      : (typeof employeeData.overtime === 'number' && employeeData.overtime >= 1 && employeeData.overtime <= 5)
+        ? employeeData.overtime
+        : null;
+
+  const isOvertime = otRating !== null
+    ? otRating >= 3
+    : (employeeData.overtime === true || 
+       employeeData.overtime === 1 || 
+       String(employeeData.overtime).toLowerCase() === 'yes');
 
   // 1. Standardize numeric inputs
   const numInputs = [age, salary, experience, jobSat, wlb, envSat, relSat];
@@ -43,8 +53,10 @@ export function calculateAttritionRisk(employeeData) {
     department === 'Sales' ? 1 : 0,
   ];
 
-  // 3. Binary feature: overtime
-  const otVal = isOvertime ? 1 : 0;
+  // 3. Binary or scaled feature: overtime
+  const otVal = otRating !== null
+    ? Math.max(0, Math.min(1, (otRating - 1) / 4))
+    : (isOvertime ? 1 : 0);
 
   // 4. Feature vector
   const featureVector = [...stdNum, ...deptOneHot, otVal];
@@ -55,7 +67,6 @@ export function calculateAttritionRisk(employeeData) {
     z += featureVector[i] * params.coefficients[i];
   }
 
-  // 6. Calibrated probability using sigmoid
   // 6. Calibrated probability using sigmoid
   const rawProb = 1.0 / (1.0 + Math.exp(-z));
   // Bound strictly between 0.02 and 0.98 for realistic corporate calibration
@@ -85,13 +96,38 @@ export function calculateAttritionRisk(employeeData) {
   }
 
   // Composite satisfaction score (1 - 5)
-  const compositeSatisfaction = ((jobSat + wlb + envSat + relSat) / 4).toFixed(1);
+  const compositeSatisfaction = employeeData.composite_satisfaction !== undefined && employeeData.composite_satisfaction !== null
+    ? Number(employeeData.composite_satisfaction).toFixed(1)
+    : ((jobSat + wlb + envSat + relSat) / 4).toFixed(1);
 
   // 9. Explainability & Contributing Factors (SHAP-style attribution)
   const factorContributions = [];
 
   // Overtime impact
-  if (isOvertime) {
+  if (otRating !== null) {
+    if (otRating >= 4) {
+      factorContributions.push({
+        feature: `Heavy Overtime Workload (${otRating}/5)`,
+        impact: `+${(0.18 + (otRating - 3) * 0.08).toFixed(3)}`,
+        type: 'risk',
+        desc: `High overtime rating of ${otRating}/5 indicates acute fatigue and burnout risk.`
+      });
+    } else if (otRating === 3) {
+      factorContributions.push({
+        feature: `Moderate Overtime (3/5)`,
+        impact: '+0.092',
+        type: 'risk',
+        desc: 'Occasional overtime requires workload tracking to prevent turnover spikes.'
+      });
+    } else {
+      factorContributions.push({
+        feature: `Manageable Hours (${otRating}/5 Overtime)`,
+        impact: '-0.182',
+        type: 'protective',
+        desc: 'Low/no overtime workload significantly stabilizes employee retention.'
+      });
+    }
+  } else if (isOvertime) {
     factorContributions.push({
       feature: 'Overtime Workload',
       impact: '+0.264',

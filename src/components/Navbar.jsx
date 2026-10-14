@@ -1,6 +1,7 @@
 import React from 'react';
 import { 
   LayoutDashboard, 
+  ClipboardCheck,
   UserCheck, 
   Sliders, 
   Users, 
@@ -29,6 +30,7 @@ export default function Navbar({
 }) {
   const tabs = [
     { id: 'dashboard', label: 'HR Analytics Dashboard', icon: LayoutDashboard },
+    { id: 'survey', label: 'Survey Management', icon: ClipboardCheck, badge: 'HR Admin' },
     { id: 'predictor', label: 'Attrition Predictor', icon: UserCheck },
     { id: 'whatif', label: 'What-If Simulator', icon: Sliders },
     { id: 'directory', label: 'Workforce Roster', icon: Users },
@@ -140,7 +142,12 @@ export default function Navbar({
               >
                 <Icon size={16} />
                 <span>{tab.label}</span>
-                {tab.id === 'predictor' && (
+                {tab.badge && (
+                  <span className="tab-pill" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: '#ffffff', boxShadow: '0 2px 6px rgba(16, 185, 129, 0.3)' }}>
+                    {tab.badge}
+                  </span>
+                )}
+                {tab.id === 'predictor' && !tab.badge && (
                   <span className="tab-pill">Core Tool</span>
                 )}
               </button>

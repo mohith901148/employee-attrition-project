@@ -4095,3 +4095,272 @@
   transform: translateY(-1px);
 }
 
+/* ==========================================================================
+   Employee Survey Form & Excel Bridge - Unified Platform Styles
+   ========================================================================== */
+
+.survey-two-col-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+@media (max-width: 640px) {
+  .survey-two-col-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.survey-input-with-action {
+  display: flex;
+  gap: 8px;
+}
+
+.survey-mini-btn {
+  padding: 0 12px !important;
+  height: 40px;
+  font-size: 0.76rem !important;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.survey-composite-sub-row {
+  border-top: 1px dashed var(--border-color);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.survey-composite-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.survey-auto-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.survey-auto-toggle input {
+  accent-color: var(--primary);
+}
+
+.survey-comp-input {
+  width: 72px !important;
+  padding: 4px 8px !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  text-align: center;
+  height: 32px;
+}
+
+.survey-overtime-sub-row {
+  border-top: 1px dashed var(--border-color);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.sat-btn-danger {
+  background: var(--risk-high-bg) !important;
+  border-color: var(--risk-high) !important;
+  color: var(--risk-high) !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.3) !important;
+}
+
+.sat-btn-warning {
+  background: var(--risk-med-bg) !important;
+  border-color: var(--risk-med) !important;
+  color: var(--risk-med) !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3) !important;
+}
+
+.survey-action-footer {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.survey-cta-btn {
+  width: 100%;
+  padding: 13px 24px !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: var(--radius-md) !important;
+}
+
+.survey-cta-hint {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.survey-native-alert {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: var(--risk-low-bg);
+  border: 1px solid var(--risk-low-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.12);
+  position: relative;
+}
+
+.survey-alert-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.survey-alert-body {
+  flex: 1;
+  font-size: 0.82rem;
+  color: var(--text-main);
+}
+
+.survey-alert-body strong {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--risk-low);
+  margin-bottom: 2px;
+}
+
+.survey-alert-dismiss {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.survey-alert-dismiss:hover {
+  color: var(--text-main);
+}
+
+.survey-excel-bridge-box {
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.survey-excel-bridge-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.84rem;
+  color: var(--text-main);
+}
+
+.survey-excel-bridge-p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Standalone Remote Survey Page & Survey Management Styles
+   ══════════════════════════════════════════════════════════ */
+.standalone-survey-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.standalone-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 18px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+}
+
+.standalone-profile-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.standalone-profile-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+
+.standalone-profile-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+/* Survey Management Link Row */
+.survey-link-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.survey-link-code {
+  flex: 1;
+  min-width: 250px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.88rem;
+  color: var(--primary);
+  background: var(--bg-card);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.credential-add-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+
+

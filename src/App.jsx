@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from './components/Navbar';
 import DashboardTab from './components/DashboardTab';
+import SurveyManagementTab from './components/SurveyManagementTab';
 import PredictorTab from './components/PredictorTab';
 import WhatIfSimulator from './components/WhatIfSimulator';
 import DirectoryTab from './components/DirectoryTab';
@@ -29,6 +30,100 @@ export default function App() {
   const [whatIfTarget, setWhatIfTarget] = useState(null);
   const [predictorTarget, setPredictorTarget] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [surveyResponses, setSurveyResponses] = useState(() => {
+    try {
+      const saved = localStorage.getItem('workforcepulse_survey_responses');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [customAuthorizedEmployees, setCustomAuthorizedEmployees] = useState(() => {
+    try {
+      const saved = localStorage.getItem('workforcepulse_custom_employees');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const authorizedEmployees = useMemo(() => {
+    const customIds = new Set(customAuthorizedEmployees.map(c => String(c.employee_id || '').toUpperCase()));
+    const benchmarkList = benchmarkEmployees
+      .filter(b => !customIds.has(String(b.employee_id || '').toUpperCase()))
+      .map(emp => ({
+        employee_id: emp.employee_id,
+        name: emp.name,
+        age: emp.age,
+        salary: emp.salary,
+        experience: emp.experience,
+        department: emp.department,
+      }));
+    return [...customAuthorizedEmployees, ...benchmarkList];
+  }, [customAuthorizedEmployees]);
+
+  const handleAddCredential = (newCred) => {
+    setCustomAuthorizedEmployees(prev => {
+      const filtered = prev.filter(
+        e => String(e.employee_id || '').toLowerCase() !== String(newCred.employee_id || '').toLowerCase()
+      );
+      const updated = [newCred, ...filtered];
+      try {
+        localStorage.setItem('workforcepulse_custom_employees', JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to save custom employees:', e);
+      }
+      return updated;
+    });
+  };
+
+  const handleRemoveCredential = (employeeId) => {
+    setCustomAuthorizedEmployees(prev => {
+      const updated = prev.filter(e => e.employee_id !== employeeId);
+      try {
+        localStorage.setItem('workforcepulse_custom_employees', JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to update custom employees:', e);
+      }
+      return updated;
+    });
+  };
+
+  const handleSaveSurveyResponse = (newResponse) => {
+    setSurveyResponses(prev => {
+      const updated = [newResponse, ...prev];
+      try {
+        localStorage.setItem('workforcepulse_survey_responses', JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to save survey to localStorage:', e);
+      }
+      return updated;
+    });
+  };
+
+  const handleClearSurveys = () => {
+    if (window.confirm('Are you sure you want to clear all stored survey responses?')) {
+      setSurveyResponses([]);
+      try {
+        localStorage.removeItem('workforcepulse_survey_responses');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
+  const handleDeleteSurvey = (index) => {
+    setSurveyResponses(prev => {
+      const updated = prev.filter((_, i) => i !== index);
+      try {
+        localStorage.setItem('workforcepulse_survey_responses', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+  };
 
   const handleLogin = (user) => {
     setCurrentUser(user);
@@ -222,6 +317,17 @@ export default function App() {
             employees={employees}
             onSelectEmployee={(emp) => setSelectedEmployee(emp)}
             onNavigateToPredictor={() => setActiveTab('predictor')}
+          />
+        )}
+
+        {activeTab === 'survey' && (
+          <SurveyManagementTab
+            authorizedEmployees={authorizedEmployees}
+            onAddCredential={handleAddCredential}
+            onRemoveCredential={handleRemoveCredential}
+            surveyResponses={surveyResponses}
+            onClearSurveys={handleClearSurveys}
+            onDeleteSurvey={handleDeleteSurvey}
           />
         )}
 
